@@ -65,9 +65,9 @@ export default async (req: Request, context: Context) => {
     prompt += "The output must be an anagram, with no exceptions. ";
     prompt += "Do not output duplicate anagrams. ";
     prompt += "Do not output anagrams that are very similar to the source image. "
-    // prompt += "You may use each letter once for every occurrence. ";
-    // prompt += "Do not use letters that are not present in the text. ";
-    // prompt += "Do not use letters more than the number of times they appear in the text. ";
+    prompt += "You may use each letter once for every occurrence. ";
+    prompt += "Do not use letters that are not present in the text. ";
+    prompt += "Do not use letters more than the number of times they appear in the text. ";
     prompt += "Format your output with one anagram per-line. ";
     prompt += "Start all lines with a bullet point. ";
 

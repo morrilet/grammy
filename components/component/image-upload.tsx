@@ -83,6 +83,7 @@ export function ImageUpload(props: ImageUploadProps) {
             id="dropzone-file"
             accept="image/png, image/jpeg"
             type="file"
+            capture="environment"
             className="hidden"
           />
         </div>
