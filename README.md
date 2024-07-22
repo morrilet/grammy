@@ -1,5 +1,13 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Grammy Notes:
+
+1. Take a single image from a user upload (including camera app)
+2. Throw the image to https://www.imgocr.com/ for processing
+3. Optionally display the found text to the user for tweaking
+4. Send the text to Gemini
+5. Display a few anagrams!
+
 ## Getting Started
 
 First, run the development server:
