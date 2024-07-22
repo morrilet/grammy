@@ -32,9 +32,43 @@ import { Progress } from "../ui/progress";
 
 export function LandingPage() {
   const [loading, setLoading] = useState<Boolean>(false);
+  const [error, setError] = useState<String>();
+  const [results, setResults] = useState<String[]>([]);
 
-  const uploadFile = (file: File) => {
+  const uploadFile = async (file: File) => {
     setLoading(true);
+    setResults([]);
+
+    let fileData = null
+    try {
+      fileData = await base64EncodeFile(file)
+    } catch(error) {
+      console.error(error);
+      return;
+    }
+
+    const response = await fetch("/.netlify/functions/upload-text", {
+      method: "POST",
+      body: JSON.stringify({
+        filename: file.name,
+        filetype: file.type,
+        filedata: fileData
+      })
+    })
+    const text = await response.text();
+    setResults(text.split('\n'));
+    setLoading(false);
+  }
+  
+  const base64EncodeFile = (file: File) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        resolve(reader.result);
+      }
+      reader.onerror = reject;
+    })
   }
 
   return (
@@ -46,6 +80,11 @@ export function LandingPage() {
         <p className="text-muted-foreground md:text-xl">Rewrite some signs, nerd</p>
         {!loading && (
           <UploadForm onSubmit={uploadFile} />
+        )}
+        {results && (
+          <ul>
+            {results.map((res, i) => <li key={i}>{res}</li>)}
+          </ul>
         )}
         {loading && (
           <Progress 

@@ -56,7 +56,7 @@ export function ImageUpload(props: ImageUploadProps) {
       'image/jpeg': [],
       'image/png': []
     },
-    maxSize: 10*1000*1000 // 10 MB
+    maxSize: 20*1000*1000 // 20 MB - this is the limit provided by Gemini
   });
 
   return (
