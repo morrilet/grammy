@@ -58,8 +58,9 @@ export default async (req: Request, context: Context) => {
     // Okay, time for the real deal. Again, encourage the AI. It often fails if we don't.
     let prompt = ""
     prompt += "You're an advanced AI capable of creating sentences from difficult sets of letters.\n"
-    prompt += "Create 1-5 sentences using the following letters. Do not add any letters.\n"
-    prompt += "For each sentence, only use the letters at most as many times as I tell you. The sentences do not need to make sense.\n"
+    prompt += "Create 1-5 sentences using the following letters. Do not add any letter that are not in the list.\n"
+    prompt += "For each sentence, only use the letters at most as many times as I tell you.\n"
+    prompt += "The sentences do not need to make sense. Do not add punctuation. \n"
     prompt += "\n";
     prompt += "Here are two examples of good sentences:\n"
     prompt += '{"e": 2, "l": 1, "g": 1, "a": 2, "n": 2, "t": 1, "m": 1} -> a gentleman\n'
@@ -79,5 +80,5 @@ export default async (req: Request, context: Context) => {
         sentences = model_functions[call?.name](call.args);
     }
 
-    return new Response(sentences.join('\n'))
+    return new Response(JSON.stringify(sentences))
 }

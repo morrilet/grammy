@@ -71,7 +71,7 @@ const getLetterRequestData = async (req: Request) => {
     return result;
 }
 
-const parseLetterString = (raw_letters: String) => {
+const parseLetterString = (raw_letters: string) => {
     const letters : {[token: string] : number} = {}
     
     // Super easy, just run through the letters string and tally up the characters we see.

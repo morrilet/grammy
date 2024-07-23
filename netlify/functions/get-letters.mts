@@ -92,7 +92,7 @@ export default async (req: Request, context: Context) => {
 
     // The model should return a call to `getImageHasText`, which returns whether or not we have text.
     if (!call || !model_functions[call.name](call.args)) {
-        return new Response("Unable to find text in this image");
+        return new Response();
     }
     
     // Let's get the letters in the text next. It's hilarious, but the AI actuallly needs to 
