@@ -47,7 +47,7 @@ export function LandingPage() {
       return;
     }
 
-    const response = await fetch("/.netlify/functions/upload-text", {
+    const letters_response = await fetch("/.netlify/functions/get-letters", {
       method: "POST",
       body: JSON.stringify({
         filename: file.name,
@@ -55,11 +55,20 @@ export function LandingPage() {
         filedata: fileData
       })
     })
-    const text = await response.text();
-    setResults(text.split('\n'));
+    const letters = await letters_response.text();
+
+    const sentences_response = await fetch("/.netlify/functions/get-sentences", {
+      method: "POST",
+      body: JSON.stringify({
+        letters: letters
+      })
+    })
+    const sentences = await sentences_response.text();
+
+    setResults(sentences.split('\n'));
     setLoading(false);
   }
-  
+
   const base64EncodeFile = (file: File) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
