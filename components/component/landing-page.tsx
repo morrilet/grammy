@@ -194,9 +194,9 @@ export function LandingPage() {
   }
 
   const formatResults = () => {
-    return results.map(res => {
+    return results.map((res, i) => {
       return (
-        <li>
+        <li key={i}>
           {res.valid ? 	'\u{1F389}' : '\u{274C}'} {res.sentence.charAt(0).toUpperCase()}{res.sentence.toLowerCase().slice(1)}
         </li>
       )
