@@ -215,8 +215,8 @@ export function LandingPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-[100dvh] items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-md w-full space-y-4 text-center">
+    <div className="flex flex-col min-h-[100dvh] justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
+      <div className="flex-row mx-auto max-w-md w-full space-y-4 text-center">
         <h1 className="text-3xl font-bold tracking-tighter text-foreground sm:text-4xl md:text-5xl">
           Create an anagram
         </h1>

@@ -15,12 +15,12 @@ export function UploadForm(props: UploadFormProps) {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="flex w-full max-w-md gap-2">
-            <ImageUpload onAcceptFile={(file: File) => {setFile(file)}}/>
+        <form onSubmit={handleSubmit} className="flex flex-space w-full items-stretch max-w-md gap-2">
+            <ImageUpload className="grow h-10" onAcceptFile={(file: File) => {setFile(file)}}/>
             <Button
                 disabled={file == null}
                 type="submit"
-                className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus:outline-none focus:ring-1 focus:ring-primary"
+                className="inline-flex shrink-0 h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus:outline-none focus:ring-1 focus:ring-primary"
             >
                 Submit
             </Button>

@@ -9,13 +9,17 @@ import { useCallback, useState, useEffect } from "react";
 import { FileRejection, useDropzone } from "react-dropzone";
 import { Input } from "../ui/input";
 
-const ImageIcon = <FileImage size={40} className={"fill-purple-600"} />
-
 type ImageUploadProps = {
   onAcceptFile?: (file: File) => void
 }
+const maxFilenameCharacters = 20;
 
-export function ImageUpload(props: ImageUploadProps) {
+const classes = {
+  label: "h-full relative flex flex-col items-start justify-center w-full border-2 border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100",
+  icon: "text-center flex items-center",
+}
+
+export function ImageUpload(props: ImageUploadProps & React.HTMLAttributes<HTMLDivElement>) {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [errors, setErrors] = useState<String[]>([]);
 
@@ -49,30 +53,30 @@ export function ImageUpload(props: ImageUploadProps) {
   const {
     getRootProps,
     getInputProps,
-  } = useDropzone({ 
-    onDrop, 
+  } = useDropzone({
+    onDrop,
     maxFiles: 1,
     accept: {
       'image/jpeg': [],
       'image/png': []
     },
-    maxSize: 20*1000*1000 // 20 MB - this is the limit provided by Gemini
+    maxSize: 20 * 1000 * 1000 // 20 MB - this is the limit provided by Gemini
   });
 
   return (
-    <div>
+    <div {...props} className={"items-stretch " + props['className']}>
       {uploadedFiles.length == 0 && (
-        <div>
+        <div className="h-full">
           <label
             {...getRootProps()}
-            className="relative flex flex-col items-center justify-center w-full py-6 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 "
+            className={classes.label + " border-dashed"}
           >
-            <div className=" text-center flex items-center">
-              <div className=" border p-2 rounded-md max-w-min mx-auto">
+            <div className={classes.icon}>
+              <div className="border p-2 rounded-md max-w-min mx-auto">
                 <UploadCloud size={20} />
               </div>
 
-              <p className="text-xs text-gray-500">
+              <p className="px-3 text-xs text-gray-500">
                 Click and drag to upload files, or take a photo
               </p>
             </div>
@@ -90,39 +94,38 @@ export function ImageUpload(props: ImageUploadProps) {
       )}
 
       {uploadedFiles.length > 0 && (
-        <div>
-          <p className="font-medium my-2 mt-6 text-muted-foreground text-sm">
-            Uploaded Files
-          </p>
-          <div className="space-y-2 pr-3">
-            {uploadedFiles.map((file) => {
-              return (
-                <div
-                  key={file.lastModified}
-                  className="flex justify-between gap-2 rounded-lg overflow-hidden border border-slate-100 group hover:pr-0 pr-2 hover:border-slate-300 transition-all"
-                >
-                  <div className="flex items-center flex-1 p-2">
-                    <div className="text-white">
-                      {ImageIcon}
-                    </div>
-                    <div className="w-full ml-2 space-y-1">
-                      <div className="text-sm flex justify-between">
-                        <p className="text-muted-foreground ">
-                          {file.name.slice(0, 25)}
-                        </p>
-                      </div>
+        <div className="h-full">
+          {uploadedFiles.map((file) => {
+            return (
+              <label
+                key={file.lastModified}
+                {...getRootProps()}
+                className={classes.label}
+              >
+                <div className={classes.icon}>
+                  <div className="px-2 rounded-md max-w-min mx-auto">
+                    <FileImage size={30} />
+                  </div>
+
+                  <div className="w-full ml-2 space-y-1">
+                    <div className="text-sm flex justify-between">
+                      <p className="text-muted-foreground ">
+                        {file.name.slice(0, maxFilenameCharacters)}
+                        {file.name.length > maxFilenameCharacters ? '...' : ''}
+                      </p>
                     </div>
                   </div>
+
                   <button
-                    onClick={() => removeFile(file)}
-                    className="bg-red-500 text-white transition-all items-center justify-center px-2 hidden group-hover:flex"
+                    onClick={(e) => { e.stopPropagation(); removeFile(file) }}
+                    className="bg-red-500 text-white items-center justify-center px-2"
                   >
                     <X size={20} />
                   </button>
                 </div>
-              );
-            })}
-          </div>
+              </label>
+            );
+          })}
         </div>
       )}
 
