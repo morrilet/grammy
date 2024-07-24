@@ -61,7 +61,7 @@ export function ImageUpload({onAcceptFiles, onRejectFiles, ...otherProps}: Image
       'image/jpeg': [],
       'image/png': []
     },
-    maxSize: 20 * 1000 * 1000 // 20 MB - this is the limit provided by Gemini
+    maxSize: 4.5 * 1000 * 1000 // Gemini can take 20MB, but Netlify functions in base64 are about 4.5MB max.
   });
 
   return (

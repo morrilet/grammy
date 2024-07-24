@@ -84,7 +84,7 @@ export function LandingPage() {
   }
 
   const checkSentenceValid = (sentence: string, letters: {[token: string]: number}) => {
-    const raw_letters = sentence.toUpperCase().replace(/ /g, "");  // TODO: Maybe make this a util - we use similar code in `get-letters.mts` as well.
+    const raw_letters = sentence?.toUpperCase().replace(/ /g, "");  // TODO: Maybe make this a util - we use similar code in `get-letters.mts` as well.
     const lettersInSentence = parseLetterString(raw_letters);
     let valid = true;
 

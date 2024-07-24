@@ -1,5 +1,5 @@
 import type { Context } from '@netlify/functions';
-import { FunctionDeclaration, FunctionDeclarationSchemaProperty, GoogleGenerativeAI, Tool} from '@google/generative-ai'
+import { FunctionDeclaration, FunctionDeclarationSchemaProperty, GoogleGenerativeAI, HarmBlockThreshold, HarmCategory, Tool} from '@google/generative-ai'
 import { getLetterRequestData } from '../utils';
 
 // -~-~-~-~- GENERATE SENTENCES AI FUNCTION -~-~-~-~- //
@@ -12,11 +12,11 @@ const generateSentencesFunctionDeclaration = {
     name: "generateSentences",
     parameters: {
         type: "OBJECT",
-        description: "Gets a list of 1-5 sentences constructed with a set of letters and their maximum counts.",
+        description: "Gets a list of 1-5 unique sentences constructed with a set of letters and their maximum counts.",
         properties: {
             sentences: {
                 type: "ARRAY",
-                description: "1-5 sentences generated from a list of letters.",
+                description: "1-5 unique sentences generated from a list of letters.",
                 items: {
                     type: "STRING"
                 } as FunctionDeclarationSchemaProperty
@@ -49,7 +49,13 @@ export default async (req: Request, context: Context) => {
     ]} as Tool
     const model = genAI.getGenerativeModel({
         model: "gemini-1.5-flash",
-        tools: tools as Tool[]
+        tools: tools as Tool[],
+        safetySettings: [
+            {category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH},
+            {category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH},
+            {category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.HARM_BLOCK_THRESHOLD_UNSPECIFIED},  // Most things are fine, but leave this one to the Gemini default.
+            {category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH},
+        ]
     });
 
     // Spin up a chat with the model.
