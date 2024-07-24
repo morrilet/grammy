@@ -1,44 +1,24 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Grammy
 
-## Grammy Notes:
+## An AI-powered, on-the-go anagram* generator.
 
-1. Take a single image from a user upload (including camera app)
-2. Throw the image to https://www.imgocr.com/ for processing
-3. Optionally display the found text to the user for tweaking
-4. Send the text to Gemini
-5. Display a few anagrams!
+*Disclaimer: generates terrible anagrams.
 
-## Getting Started
+Does it generate good (or even valid) anagrams? Very rarely! Is it fun to use? **You bet it is.**
 
-First, run the development server:
+Grammy was built rapidly with Next.js (create-next-app), V0, Shadcn/UI, Gemini, and Netlify Functions as a way to get hands-on with AI tools and re-familiarize myself with Next.js. Netlify Functions were a bonus when I decided that maybe (just maybe) I should treat my Gemini API key with some dignity.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Running Locally
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. `npm install`
+2. `npx netlify dev`
+3. Open [http://localhost:8888](http://localhost:8888) and start playing around.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Using the Netlify CLI tools instead of the NPM scripts provided by react also hosts (and provides hot-reloading) to our functions, which makes the whole thing work. Rad stuff, Netlify (<3).
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Deploying
 
-## Learn More
+1. `npm run build` to make sure the linter won't complain when Netlify tries to deploy your code.
+1. Push changes to `main`, pat yourself on the back, and smile because you got to write code today.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Easy peasy!
