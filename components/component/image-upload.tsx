@@ -20,19 +20,19 @@ const classes = {
   icon: "text-center flex items-center",
 }
 
-export function ImageUpload(props: ImageUploadProps & React.HTMLAttributes<HTMLDivElement>) {
+export function ImageUpload({onAcceptFiles, onRejectFiles, ...otherProps}: ImageUploadProps & React.HTMLAttributes<HTMLDivElement>) {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([])
 
   useEffect(() => {
-    if (props.onAcceptFiles) {
-      props.onAcceptFiles(uploadedFiles);
+    if (onAcceptFiles) {
+      onAcceptFiles(uploadedFiles);
     }
   }, [uploadedFiles])
 
   useEffect(() => {
-    if (props.onRejectFiles && rejectedFiles.length > 0) {
-      props.onRejectFiles(rejectedFiles)
+    if (onRejectFiles && rejectedFiles.length > 0) {
+      onRejectFiles(rejectedFiles)
     }
   }, [rejectedFiles])
 
@@ -65,7 +65,7 @@ export function ImageUpload(props: ImageUploadProps & React.HTMLAttributes<HTMLD
   });
 
   return (
-    <div {...props} className={"items-stretch " + props['className']}>
+    <div {...otherProps} className={"items-stretch " + otherProps['className']}>
       {uploadedFiles.length == 0 && (
         <div className="h-full">
           <label
