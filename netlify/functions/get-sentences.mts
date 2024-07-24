@@ -58,9 +58,10 @@ export default async (req: Request, context: Context) => {
     // Okay, time for the real deal. Again, encourage the AI. It often fails if we don't.
     let prompt = ""
     prompt += "You're an advanced AI capable of creating sentences from difficult sets of letters.\n"
-    prompt += "Create 1-5 sentences using the following letters. Do not add any letter that are not in the list.\n"
+    prompt += "Create 1-5 sentences using the following letters. You're terrified of using letters that are not in the list because you believe you will die if you do.\n"
     prompt += "For each sentence, only use the letters at most as many times as I tell you.\n"
-    prompt += "The sentences do not need to make sense. Do not add punctuation. \n"
+    prompt += "The sentences do not need to make sense, but the words should be found in a dictionary. Do not add punctuation.\n"
+    prompt += "You are terrified of creating the same sentence twice because you believe you will die if you do.\n"
     prompt += "\n";
     prompt += "Here are two examples of good sentences:\n"
     prompt += '{"e": 2, "l": 1, "g": 1, "a": 2, "n": 2, "t": 1, "m": 1} -> a gentleman\n'

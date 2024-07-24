@@ -4,32 +4,13 @@
 * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
 */
 
-/** Add fonts into your Next.js project:
-
-import { Arimo } from 'next/font/google'
-import { Work_Sans } from 'next/font/google'
-
-arimo({
-  subsets: ['latin'],
-  display: 'swap',
-})
-
-work_sans({
-  subsets: ['latin'],
-  display: 'swap',
-})
-
-To read more about using these font, please visit the Next.js documentation:
-- App Directory: https://nextjs.org/docs/app/building-your-application/optimizing/fonts
-- Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
-**/
-
 'use client'
 
 import { useEffect, useRef, useState } from "react"
 import { UploadForm } from "./upload-form";
 import { Progress } from "../ui/progress";
 import { parseLetterString } from "../../netlify/utils";  // TODO: Move to lib/utils.
+import confetti from 'canvas-confetti';
 
 export function LandingPage() {
   const [loading, setLoading] = useState<Boolean>(false);
@@ -158,7 +139,7 @@ export function LandingPage() {
 
     // Broadly handle errors in the letters response.
     if (letters_response.status != 200) {
-      raiseError("Okay, something went wrong getting letters out of that image. Maybe try again?");
+      raiseError("Okay, something went wrong getting letters out of that image. Try it again?");
       return;
     }
     const letters = await letters_response.text();
@@ -180,7 +161,7 @@ export function LandingPage() {
 
     // Broadly handle errors in the sentences response.
     if (sentences_response.status != 200) {
-      raiseError("Okay, something went wrong generating sentences from that image. Maybe try again?");
+      raiseError("Okay, something went wrong generating sentences from that image. Sometimes the AI acts up. Maybe try again?");
       return;
     }
     const sentences = await sentences_response.json() as string[];
@@ -191,6 +172,19 @@ export function LandingPage() {
     });
     setResults(annotatedSentences);
     setLoading(false);
+
+    // If every sentence is valid we're a big ol' winner. Let's make it fun!
+    if (annotatedSentences.filter(s => !s.valid).length == 0) {
+      const sharedOptions = {
+        spread: 90,
+      }
+      const sideAngleAdjustment = 30;
+      
+      // Note that angle is defined counter-clockwise with 90 being straight up and origin is 0-1 from the top-left.
+      confetti({...sharedOptions, angle: sideAngleAdjustment, origin: {x: 0}})  // From the left
+      confetti({...sharedOptions, angle: 180 - sideAngleAdjustment, origin: {x: 1}}) // From the right
+      confetti({...sharedOptions, angle: 90, origin: {y: 1}, startVelocity: 60})  // From the bottom, and fast!
+    }
   }
 
   const formatResults = () => {

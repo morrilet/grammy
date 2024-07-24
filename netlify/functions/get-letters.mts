@@ -107,5 +107,11 @@ export default async (req: Request, context: Context) => {
         lettersDictionary = parseLetterString(raw_letters.join(''));
     }
 
+    // In some cases the AI decides that there is text in the image but cannot find 
+    // characters because there's actually nothing there. Let's handle that case.
+    if (Object.keys(lettersDictionary).length == 0) {
+        return new Response();
+    }
+
     return new Response(JSON.stringify(lettersDictionary))
 }
