@@ -108,6 +108,18 @@ export function LandingPage() {
     return valid;
   }
 
+  const launchConfetti = () => {
+    const sharedOptions = {
+      spread: 90,
+    }
+    const sideAngleAdjustment = 30;
+
+    // Note that angle is defined counter-clockwise with 90 being straight up and origin is 0-1 from the top-left.
+    confetti({...sharedOptions, angle: sideAngleAdjustment, origin: {x: 0}})  // From the left
+    confetti({...sharedOptions, angle: 180 - sideAngleAdjustment, origin: {x: 1}}) // From the right
+    confetti({...sharedOptions, angle: 90, origin: {y: 1}, startVelocity: 60})  // From the bottom, and fast!
+  }
+
   const uploadFile = async (file: File) => {
     setLoading(true);
     setProgress(0);
@@ -175,15 +187,7 @@ export function LandingPage() {
 
     // If every sentence is valid we're a big ol' winner. Let's make it fun!
     if (annotatedSentences.filter(s => !s.valid).length == 0) {
-      const sharedOptions = {
-        spread: 90,
-      }
-      const sideAngleAdjustment = 30;
-      
-      // Note that angle is defined counter-clockwise with 90 being straight up and origin is 0-1 from the top-left.
-      confetti({...sharedOptions, angle: sideAngleAdjustment, origin: {x: 0}})  // From the left
-      confetti({...sharedOptions, angle: 180 - sideAngleAdjustment, origin: {x: 1}}) // From the right
-      confetti({...sharedOptions, angle: 90, origin: {y: 1}, startVelocity: 60})  // From the bottom, and fast!
+      launchConfetti();
     }
   }
 
@@ -216,7 +220,7 @@ export function LandingPage() {
         </h1>
         <p className="text-muted-foreground md:text-xl">Rewrite some signs, nerd</p>
         {!loading && (
-          <UploadForm onSubmit={uploadFile} />
+          <UploadForm onSubmit={uploadFile} onError={(errors) => setError(errors[0]) } />
         )}
         {results && !error && (
           <ul>

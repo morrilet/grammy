@@ -10,7 +10,8 @@ import { FileRejection, useDropzone } from "react-dropzone";
 import { Input } from "../ui/input";
 
 type ImageUploadProps = {
-  onAcceptFile?: (file: File) => void
+  onAcceptFiles?: (file: File[]) => void
+  onRejectFiles?: (errors: FileRejection[]) => void
 }
 const maxFilenameCharacters = 20;
 
@@ -21,28 +22,28 @@ const classes = {
 
 export function ImageUpload(props: ImageUploadProps & React.HTMLAttributes<HTMLDivElement>) {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [errors, setErrors] = useState<String[]>([]);
+  const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([])
 
   useEffect(() => {
-    if (props.onAcceptFile) {
-      props.onAcceptFile(uploadedFiles[0]);  // This dropzone only accepts one file.
+    if (props.onAcceptFiles) {
+      props.onAcceptFiles(uploadedFiles);
     }
   }, [uploadedFiles])
 
+  useEffect(() => {
+    if (props.onRejectFiles && rejectedFiles.length > 0) {
+      props.onRejectFiles(rejectedFiles)
+    }
+  }, [rejectedFiles])
+
   const removeFile = (file: File) => {
-    setErrors([]);
     setUploadedFiles((prevUploadedFiles) => {
       return prevUploadedFiles.filter((item) => item !== file);
     });
   };
 
   const onDrop = useCallback((acceptedFiles: File[], fileRejections: FileRejection[]) => {
-    setErrors([]);
-
-    if (fileRejections.length > 0) {
-      const { errors } = fileRejections[0];
-      setErrors(errors.map(err => err.message))
-    }
+    setRejectedFiles(fileRejections);
 
     setUploadedFiles((prevUploadedFiles) => {
       return [...prevUploadedFiles, ...acceptedFiles];
@@ -127,12 +128,6 @@ export function ImageUpload(props: ImageUploadProps & React.HTMLAttributes<HTMLD
             );
           })}
         </div>
-      )}
-
-      {errors.length > 0 && (
-        <ul>
-          {errors.map((err, i) => <li key={i}>{err}</li>)}
-        </ul>
       )}
     </div>
   );
