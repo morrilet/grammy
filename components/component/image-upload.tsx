@@ -17,7 +17,7 @@ const maxFilenameCharacters = 20;
 
 const classes = {
   label: "h-full relative flex flex-col items-start justify-center w-full border-2 border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 overflow-hidden",
-  icon: "text-center flex items-center shrink-0 px-2",
+  icon: "text-center flex items-center shrink-0",
 }
 
 export function ImageUpload({ onAcceptFiles, onRejectFiles, ...otherProps }: ImageUploadProps & React.HTMLAttributes<HTMLDivElement>) {
@@ -72,7 +72,7 @@ export function ImageUpload({ onAcceptFiles, onRejectFiles, ...otherProps }: Ima
             {...getRootProps()}
             className={classes.label + " border-dashed"}
           >
-            <div className={classes.icon + " px-0"}>
+            <div className={classes.icon}>
               <div className="border p-2 rounded-md max-w-min mx-auto">
                 <UploadCloud size={20} />
               </div>
@@ -106,7 +106,7 @@ export function ImageUpload({ onAcceptFiles, onRejectFiles, ...otherProps }: Ima
                 
                 <div className="flex items-center text-center w-full">
 
-                  <div className={classes.icon}>
+                  <div className={classes.icon + " px-2"}>
                     <div className="rounded-md max-w-min mx-auto">
                       <FileImage size={30} />
                     </div>
