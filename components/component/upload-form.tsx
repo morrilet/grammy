@@ -25,8 +25,8 @@ export function UploadForm(props: UploadFormProps) {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-space w-full items-stretch max-w-md gap-2">
-            <ImageUpload className="grow h-10" 
+        <form onSubmit={handleSubmit} className="flex grow flex-space w-full items-stretch max-w-md gap-2 justify-center">
+            <ImageUpload className="grow h-10 max-w-60 md:max-w-full" 
                 onAcceptFiles={(files: File[]) => {setFile(files[0])}} 
                 onRejectFiles={(rejections) => handleRejections(rejections)}
             />

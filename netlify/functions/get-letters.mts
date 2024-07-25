@@ -93,7 +93,7 @@ export default async (req: Request, context: Context) => {
 
     // The model should return a call to `getImageHasText`, which returns whether or not we have text.
     if (!call || !model_functions[call.name](call.args)) {
-        return new Response();
+        return new Response("{}");
     }
     
     // Let's get the letters in the text next. It's hilarious, but the AI actuallly needs to 
@@ -110,7 +110,7 @@ export default async (req: Request, context: Context) => {
     // In some cases the AI decides that there is text in the image but cannot find 
     // characters because there's actually nothing there. Let's handle that case.
     if (Object.keys(lettersDictionary).length == 0) {
-        return new Response();
+        return new Response("{}");
     }
 
     return new Response(JSON.stringify(lettersDictionary))

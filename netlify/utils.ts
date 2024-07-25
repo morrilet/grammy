@@ -67,6 +67,6 @@ export const getLetterRequestData = async (req: Request) => {
         return result;
     }
 
-    result.letters = JSON.parse(data['letters'])
+    result.letters = data['letters']
     return result;
 }

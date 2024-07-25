@@ -16,11 +16,11 @@ type ImageUploadProps = {
 const maxFilenameCharacters = 20;
 
 const classes = {
-  label: "h-full relative flex flex-col items-start justify-center w-full border-2 border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100",
-  icon: "text-center flex items-center",
+  label: "h-full relative flex flex-col items-start justify-center w-full border-2 border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 overflow-hidden",
+  icon: "text-center flex items-center shrink-0 px-2",
 }
 
-export function ImageUpload({onAcceptFiles, onRejectFiles, ...otherProps}: ImageUploadProps & React.HTMLAttributes<HTMLDivElement>) {
+export function ImageUpload({ onAcceptFiles, onRejectFiles, ...otherProps }: ImageUploadProps & React.HTMLAttributes<HTMLDivElement>) {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([])
 
@@ -65,14 +65,14 @@ export function ImageUpload({onAcceptFiles, onRejectFiles, ...otherProps}: Image
   });
 
   return (
-    <div {...otherProps} className={"items-stretch " + otherProps['className']}>
+    <div {...otherProps} className={"items-stretch" + otherProps['className']}>
       {uploadedFiles.length == 0 && (
         <div className="h-full">
           <label
             {...getRootProps()}
             className={classes.label + " border-dashed"}
           >
-            <div className={classes.icon}>
+            <div className={classes.icon + " px-0"}>
               <div className="border p-2 rounded-md max-w-min mx-auto">
                 <UploadCloud size={20} />
               </div>
@@ -103,27 +103,32 @@ export function ImageUpload({onAcceptFiles, onRejectFiles, ...otherProps}: Image
                 {...getRootProps()}
                 className={classes.label}
               >
-                <div className={classes.icon}>
-                  <div className="px-2 rounded-md max-w-min mx-auto">
-                    <FileImage size={30} />
+                
+                <div className="flex items-center text-center w-full">
+
+                  <div className={classes.icon}>
+                    <div className="rounded-md max-w-min mx-auto">
+                      <FileImage size={30} />
+                    </div>
                   </div>
 
-                  <div className="w-full ml-2 space-y-1">
-                    <div className="text-sm flex justify-between">
-                      <p className="text-muted-foreground ">
-                        {file.name.slice(0, maxFilenameCharacters)}
-                        {file.name.length > maxFilenameCharacters ? '...' : ''}
-                      </p>
-                    </div>
+                  <div className="flex shrink grow align-left min-w-0">
+                    <p className="inline text-left text-xs text-muted-foreground text-ellipsis whitespace-nowrap overflow-hidden">
+                      {file.name}
+                      {/* {file.name.slice(0, maxFilenameCharacters)} */}
+                      {/* {file.name.length > maxFilenameCharacters ? '...' : ''} */}
+                    </p>
                   </div>
 
                   <button
                     onClick={(e) => { e.stopPropagation(); removeFile(file) }}
-                    className="bg-red-500 text-white items-center justify-center px-2"
+                    className={classes.icon}
                   >
                     <X size={20} />
                   </button>
+
                 </div>
+
               </label>
             );
           })}

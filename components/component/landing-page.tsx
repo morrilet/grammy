@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { UploadForm } from "./upload-form";
 import { Progress } from "../ui/progress";
-import { parseLetterString } from "../../lib/utils";
+import { parseLetterString, base64EncodeFile } from "../../lib/utils";
 import confetti from 'canvas-confetti';
 import { Footer } from "./footer";
 
@@ -11,7 +11,7 @@ export function LandingPage() {
   const [loading, setLoading] = useState<Boolean>(false);
   const [progress, setProgress] = useState<number>(0);
   const [error, setError] = useState<string>();
-  const [results, setResults] = useState<{sentence: string, valid: boolean}[]>([]);
+  const [results, setResults] = useState<{ sentence: string, valid: boolean }[]>([]);
   const progressBarInterval = useRef<NodeJS.Timeout | null>(null);
 
   // Kicks off the progress bar starting at a given start value and going until a given end value.
@@ -78,7 +78,7 @@ export function LandingPage() {
     setError(message);
   }
 
-  const checkSentenceValid = (sentence: string, letters: {[token: string]: number}) => {
+  const checkSentenceValid = (sentence: string, letters: { [token: string]: number }) => {
     const raw_letters = sentence?.toUpperCase().replace(/ /g, "");
     const lettersInSentence = parseLetterString(raw_letters);
     let valid = true;
@@ -108,79 +108,99 @@ export function LandingPage() {
     const sideAngleAdjustment = 30;
 
     // Note that angle is defined counter-clockwise with 90 being straight up and origin is 0-1 from the top-left.
-    confetti({...sharedOptions, angle: sideAngleAdjustment, origin: {x: 0}})  // From the left
-    confetti({...sharedOptions, angle: 180 - sideAngleAdjustment, origin: {x: 1}}) // From the right
-    confetti({...sharedOptions, angle: 90, origin: {y: 1}, startVelocity: 60})  // From the bottom, and fast!
+    confetti({ ...sharedOptions, angle: sideAngleAdjustment, origin: { x: 0 } })  // From the left
+    confetti({ ...sharedOptions, angle: 180 - sideAngleAdjustment, origin: { x: 1 } }) // From the right
+    confetti({ ...sharedOptions, angle: 90, origin: { y: 1 }, startVelocity: 60 })  // From the bottom, and fast!
   }
 
-  const uploadFile = async (file: File) => {
-    setLoading(true);
-    setProgress(0);
-    setResults([]);
-    setError("");
-
-    // The midpoint of the progress bar should be between 25 and 50 percent.
-    let randomProgressMidpoint = 25 + (Math.random() * (50 - 25));
-
-    let fileData = null
-    try {
-      fileData = await base64EncodeFile(file)
-    } catch (error) {
-      console.error(error);
-      return;
-    }
-
-    // Start the progress bar for the first API call.
-    startProgressBar(0, randomProgressMidpoint, 3);
-
-    const letters_response = await fetch("/.netlify/functions/get-letters", {
+  const getLettersFromAPI = async (fileType: string, fileData: string) => {
+    const response = await fetch("/.netlify/functions/get-letters", {
       method: "POST",
       body: JSON.stringify({
-        filename: file.name,
-        filetype: file.type,
+        filetype: fileType,
         filedata: fileData
       })
     })
 
-    // Broadly handle errors in the letters response.
-    if (letters_response.status != 200) {
-      raiseError("Okay, something went wrong getting letters out of that image. Try it again?");
-      return;
-    }
-    const letters = await letters_response.text();
-
-    if (letters.length == 0) {
-      raiseError("No text found in the image.");
-      return;
+    // Handle any errors.
+    if (response.status != 200) {
+      return undefined;
     }
 
-    // Continue the progress bar for the second API call.
-    startProgressBar(randomProgressMidpoint, 100, 3);
+    return await response.json();
+  }
 
-    const sentences_response = await fetch("/.netlify/functions/get-sentences", {
+  const getSentencesFromAPI = async (letters: { [token: string]: number }) => {
+    const response = await fetch("/.netlify/functions/get-sentences", {
       method: "POST",
       body: JSON.stringify({
         letters: letters
       })
     })
 
-    // Broadly handle errors in the sentences response.
-    if (sentences_response.status != 200) {
-      raiseError("Okay, something went wrong generating sentences from that image. Sometimes the AI acts up. Maybe try again?");
+    // Handle any errors.
+    if (response.status != 200) {
+      return undefined
+    }
+
+    return await response.json() as string[]
+  }
+
+  // Quick helper method for re-mapping sentences with their respective validity checks.
+  const annotateSentences = (letters: { [token: string]: number }, sentences: string[]) => {
+    return sentences.map((s) => { return { sentence: s, valid: checkSentenceValid(s, letters) } });
+  }
+
+  const uploadFile = async (file: File) => {
+    // The midpoint of the progress bar should be between 25 and 50 percent.
+    // This makes it look lively while still being vaguely helpful.
+    const randomProgressMidpoint = 25 + (Math.random() * (50 - 25));
+
+    // Set initial state before we kick everything off.
+    setLoading(true);
+    setProgress(0);
+    setResults([]);
+    setError("");
+
+    // Get the file data as a base64-encoded string and gracefully handle any errors.
+    let fileData = null
+    try {
+      fileData = await base64EncodeFile(file)
+    } catch (error) {
+      console.error(error);
+      setError("Oops! Something went wrong parsing that file.");
       return;
     }
-    const sentences = await sentences_response.json() as string[];
 
-    const annotatedSentences: {sentence: string, valid: boolean}[] = []
-    sentences.forEach(sentence => {
-      annotatedSentences.push({sentence: sentence, valid: checkSentenceValid(sentence, JSON.parse(letters) as {[token: string]: number})});
-    });
-    setResults(annotatedSentences);
+    // Get letters from the API and handle any weirdness.
+    startProgressBar(0, randomProgressMidpoint, 3);
+    const letters = await getLettersFromAPI(file.type, fileData as string);
+    if (letters === undefined) {
+      raiseError("Okay, something went wrong getting letters out of that image. Try it again?");
+      return;
+    }
+    if (Object.keys(letters).length == 0) {
+      raiseError("No text found in the image.");
+      return;
+    }
+
+    // Get sentences from the API. Also handle weirdness.
+    startProgressBar(randomProgressMidpoint, 100, 3);
+    const sentences = await getSentencesFromAPI(letters);
+    if (sentences === undefined) {
+      raiseError("Okay, something went wrong generating sentences from that image. Maybe try again?");
+      return;
+    }
+
+    // Great, we made it through! Let's check our sentences for validity and update state.
+    const results = annotateSentences(letters, sentences);
+    setResults(results);
     setLoading(false);
+    stopProgressBar();
     setProgress(0);
 
     // If every sentence is valid we're a big ol' winner. Let's make it fun!
-    if (annotatedSentences.filter(s => !s.valid).length == 0) {
+    if (results.filter(s => !s.valid).length == 0) {
       launchConfetti();
     }
   }
@@ -189,32 +209,21 @@ export function LandingPage() {
     return results.map((res, i) => {
       return (
         <li key={i}>
-          {res.valid ? 	'\u{1F389}' : '\u{274C}'} {res.sentence.charAt(0).toUpperCase()}{res.sentence.toLowerCase().slice(1)}
+          {res.valid ? '\u{1F389}' : '\u{274C}'} {res.sentence.charAt(0).toUpperCase()}{res.sentence.toLowerCase().slice(1)}
         </li>
       )
     })
   }
 
-  const base64EncodeFile = (file: File) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        resolve(reader.result);
-      }
-      reader.onerror = reject;
-    })
-  }
-
   return (
-    <div className="flex flex-col min-h-[100dvh] justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
+    <div className="flex flex-col min-h-[100dvh] min-w-[100dvw] justify-center bg-background px-4 pt-12 pb-6 sm:px-6 lg:px-8">
       <div className="flex-row mx-auto mt-auto max-w-md w-full space-y-4 text-center">
         <h1 className="text-3xl font-bold tracking-tighter text-foreground sm:text-4xl md:text-5xl">
           Create an anagram
         </h1>
         <p className="text-muted-foreground md:text-xl">Rewrite some signs, nerd</p>
         {!loading && (
-          <UploadForm onSubmit={uploadFile} onError={(errors) => setError(errors[0]) } />
+          <UploadForm onSubmit={uploadFile} onError={(errors) => setError(errors[0])} />
         )}
         {results && !error && (
           <ul>

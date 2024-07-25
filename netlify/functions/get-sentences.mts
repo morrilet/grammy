@@ -39,7 +39,7 @@ export default async (req: Request, context: Context) => {
 
     // Stop and return a 400 if our inputs are bad.
     if (Object.keys(handling_error).length != 0)
-        return new Response(handling_error.body as BodyInit, { status: handling_error.statusCode })
+        return new Response(handling_error.body, { status: handling_error.statusCode })
 
     // Get the model using our API key
     const apiKey = Netlify.env.get("GOOGLE_AI_API_KEY");
