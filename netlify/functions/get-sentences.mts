@@ -75,9 +75,6 @@ export default async (req: Request, context: Context) => {
     prompt += "\n"
     prompt += "Here are your letters, plus the maximum number of times you may use them in each sentence:\n"
     prompt += JSON.stringify(letters);
-
-    // Debugging...
-    console.log(prompt);
     
     const result = await chat.sendMessage([prompt]);
     const call = result.response.functionCalls()?.at(0);

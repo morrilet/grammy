@@ -1,6 +1,7 @@
 import type { Context } from '@netlify/functions';
 import { FunctionDeclaration, GoogleGenerativeAI, InlineDataPart, Tool} from '@google/generative-ai'
-import { getImageRequestData, parseLetterString } from '../utils';
+import { getImageRequestData } from '../utils';
+import { parseLetterString } from '../../lib/utils';
 
 // -~-~-~-~- GET IMAGE HAS TEXT AI FUNCTION -~-~-~-~- //
 // Used by the AI model to tell us whether or not we've found text in the image.
@@ -103,7 +104,6 @@ export default async (req: Request, context: Context) => {
     let lettersDictionary: {[token: string]: number} = {}
     if (call) {
         const raw_letters = model_functions[call?.name](call.args);
-        console.log(raw_letters);
         lettersDictionary = parseLetterString(raw_letters.join(''));
     }
 

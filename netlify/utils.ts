@@ -17,12 +17,12 @@ interface ImageRequestData extends RequestData {
 //      2. Flexibility. I have a hunch that the AI model will follow this more 
 //         strictly than plaintext, and we can play with the data easier this way.
 interface LetterRequestData extends RequestData {
-    letters?: {[key: string] : number}
+    letters?: { [key: string]: number }
 }
 
-const getImageRequestData = async (req: Request) => {
+export const getImageRequestData = async (req: Request) => {
     const data = await req.json();
-    const result : ImageRequestData = {
+    const result: ImageRequestData = {
         handling_error: {} as HandlingError
     }
 
@@ -39,7 +39,7 @@ const getImageRequestData = async (req: Request) => {
     result.image_type = data['filetype']
 
     // Ensure that input image is less that 20MB, which is the max allowed by Gemini without streaming.
-    if (result.image_data.length >= (20*1000*1000)) {
+    if (result.image_data.length >= (20 * 1000 * 1000)) {
         result.handling_error.statusCode = 400;
         result.handling_error.body = "File too large";
 
@@ -54,9 +54,9 @@ const getImageRequestData = async (req: Request) => {
     return result;
 }
 
-const getLetterRequestData = async (req: Request) => {
+export const getLetterRequestData = async (req: Request) => {
     const data = await req.json();
-    const result : LetterRequestData = {
+    const result: LetterRequestData = {
         handling_error: {} as HandlingError
     }
 
@@ -70,19 +70,3 @@ const getLetterRequestData = async (req: Request) => {
     result.letters = JSON.parse(data['letters'])
     return result;
 }
-
-const parseLetterString = (raw_letters: string) => {
-    const letters : {[token: string] : number} = {}
-    
-    // Super easy, just run through the letters string and tally up the characters we see.
-    // Note that we intentionally avoid sorting the characters here because a random order (anecdotally) improves AI outputs.
-    raw_letters.split('').forEach(token => {
-        if (letters[token] === undefined)
-            letters[token] = 0;
-        letters[token] += 1;
-    });
-
-    return letters;
-}
-
-export { getImageRequestData, getLetterRequestData, parseLetterString }

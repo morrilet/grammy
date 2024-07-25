@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from "@/components/ui/button"
 import { ImageUpload } from "./image-upload"
 import { FormEvent, useState } from "react"

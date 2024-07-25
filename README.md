@@ -2,11 +2,11 @@
 
 ## An AI-powered, on-the-go anagram* generator.
 
-*Disclaimer: generates terrible anagrams.
+**Disclaimer: generates terrible, mostly invalid anagrams.*
 
-Does it generate good (or even valid) anagrams? Very rarely! Is it fun to use? **You bet it is.**
+Does it generate good anagrams? Very rarely! Is it fun to use? **You bet it is.**
 
-Grammy was built rapidly with Next.js (create-next-app), V0, Shadcn/UI, Gemini, and Netlify Functions as a way to get hands-on with AI tools and re-familiarize myself with Next.js. Netlify Functions were a bonus when I decided that maybe (just maybe) I should treat my Gemini API key with some dignity.
+Grammy was built quickly with Next.js (create-next-app), V0, Shadcn/UI, Gemini, and Netlify Functions as a way to get hands-on with AI tools and re-familiarize myself with Next.js. Netlify Functions were a bonus when I decided that maybe (just maybe) I should treat my Gemini API key with some dignity.
 
 ## Running Locally
 
