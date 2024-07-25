@@ -65,7 +65,7 @@ export function ImageUpload({ onAcceptFiles, onRejectFiles, ...otherProps }: Ima
   });
 
   return (
-    <div {...otherProps} className={"items-stretch" + otherProps['className']}>
+    <div {...otherProps} className={"items-stretch " + otherProps['className']}>
       {uploadedFiles.length == 0 && (
         <div className="h-full">
           <label
@@ -115,14 +115,12 @@ export function ImageUpload({ onAcceptFiles, onRejectFiles, ...otherProps }: Ima
                   <div className="flex shrink grow align-left min-w-0">
                     <p className="inline text-left text-xs text-muted-foreground text-ellipsis whitespace-nowrap overflow-hidden">
                       {file.name}
-                      {/* {file.name.slice(0, maxFilenameCharacters)} */}
-                      {/* {file.name.length > maxFilenameCharacters ? '...' : ''} */}
                     </p>
                   </div>
 
                   <button
                     onClick={(e) => { e.stopPropagation(); removeFile(file) }}
-                    className={classes.icon}
+                    className={classes.icon + " px-2"}
                   >
                     <X size={20} />
                   </button>
